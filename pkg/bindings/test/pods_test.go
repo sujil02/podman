@@ -14,11 +14,12 @@ import (
 
 var _ = Describe("Podman pods", func() {
 	var (
-		bt       *bindingTest
-		s        *gexec.Session
-		newpod   string
-		err      error
-		trueFlag bool = true
+		bt        *bindingTest
+		s         *gexec.Session
+		newpod    string
+		err       error
+		trueFlag  bool = true
+		falseFlag bool = false
 	)
 
 	BeforeEach(func() {
@@ -249,5 +250,27 @@ var _ = Describe("Podman pods", func() {
 		podSummary, err = pods.List(bt.conn, nil)
 		Expect(err).To(BeNil())
 		Expect(len(podSummary)).To(Equal(0))
+	})
+
+	FIt("Remove Pod", func() {
+		// Remoce an invalid pod
+		err = pods.Remove(bt.conn, "dummyName", &falseFlag)
+		Expect(err).ToNot(BeNil())
+		code, _ := bindings.CheckResponseCode(err)
+		Expect(code).To(BeNumerically("==", http.StatusNotFound))
+
+		// Adding an alpine container to the existing pod and starting the pod.
+		_, err = bt.RunTopContainer(nil, &trueFlag, &newpod)
+		Expect(err).To(BeNil())
+		response, err := pods.Inspect(bt.conn, newpod)
+		Expect(err).To(BeNil())
+		Expect(response.State.Status).To(Equal(define.PodStateRunning))
+		err = pods.Remove(bt.conn, newpod, &falseFlag)
+		Expect(err).ToNot(BeNil())
+		code, _ = bindings.CheckResponseCode(err)
+		Expect(code).To(BeNumerically("==", http.StatusInternalServerError))
+		response, err = pods.Inspect(bt.conn, newpod)
+		Expect(err).To(BeNil())
+		Expect(response.Config.Name).To(Equal(newpod))
 	})
 })
