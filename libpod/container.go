@@ -1134,6 +1134,7 @@ func (c *Container) IDMappings() (storage.IDMappingOptions, error) {
 func (c *Container) RootUID() int {
 	for _, uidmap := range c.config.IDMappings.UIDMap {
 		if uidmap.ContainerID == 0 {
+			fmt.Println("yolo", uidmap.HostID)
 			return uidmap.HostID
 		}
 	}

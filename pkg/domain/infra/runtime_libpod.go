@@ -113,6 +113,8 @@ func getRuntime(ctx context.Context, fs *flag.FlagSet, opts *engineOpts) (*libpo
 		gidmapVal, _ := fs.GetStringSlice("gidmap")
 		subuidVal, _ := fs.GetString("subuidname")
 		subgidVal, _ := fs.GetString("subgidname")
+		fmt.Println("check 1")
+
 		mappings, err := ParseIDMapping(namespaces.UsernsMode(userns), uidmapVal, gidmapVal, subuidVal, subgidVal)
 		if err != nil {
 			return nil, err

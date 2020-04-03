@@ -305,7 +305,7 @@ func ParseCreateOpts(ctx context.Context, c *GenericCLIResults, runtime *libpod.
 		blkioWeight                                              uint16
 		namespaces                                               map[string]string
 	)
-
+	fmt.Println("check 3", c.String("user"))
 	idmappings, err := util.ParseIDMapping(ns.UsernsMode(c.String("userns")), c.StringSlice("uidmap"), c.StringSlice("gidmap"), c.String("subuidname"), c.String("subgidname"))
 	if err != nil {
 		return nil, err
@@ -910,6 +910,7 @@ func ParseCreateOpts(ctx context.Context, c *GenericCLIResults, runtime *libpod.
 }
 
 func CreateContainerFromCreateConfig(r *libpod.Runtime, createConfig *cc.CreateConfig, ctx context.Context, pod *libpod.Pod) (*libpod.Container, error) {
+	fmt.Println("here")
 	runtimeSpec, options, err := createConfig.MakeContainerConfig(r, pod)
 	if err != nil {
 		return nil, err

@@ -37,6 +37,7 @@ var (
 // bind mount under the hood...
 // TODO: handle options parsing/processing via containers/storage/pkg/mount
 func (config *CreateConfig) parseVolumes(runtime *libpod.Runtime) ([]spec.Mount, []*libpod.ContainerNamedVolume, error) {
+	fmt.Println("yo", config.Volumes)
 	// Add image volumes.
 	baseMounts, baseVolumes, err := config.getImageVolumes()
 	if err != nil {
@@ -652,7 +653,7 @@ func getNamedVolume(args []string) (*libpod.ContainerNamedVolume, error) {
 func (config *CreateConfig) getVolumeMounts() (map[string]spec.Mount, map[string]*libpod.ContainerNamedVolume, error) {
 	mounts := make(map[string]spec.Mount)
 	volumes := make(map[string]*libpod.ContainerNamedVolume)
-
+	//	fmt.Println("---------", config.User.IDMappings.UIDMap[0])
 	volumeFormatErr := errors.Errorf("incorrect volume format, should be [host-dir:]ctr-dir[:option]")
 
 	for _, vol := range config.Volumes {
@@ -663,6 +664,7 @@ func (config *CreateConfig) getVolumeMounts() (map[string]spec.Mount, map[string
 			err     error
 		)
 
+		fmt.Println(vol)
 		splitVol := strings.Split(vol, ":")
 		if len(splitVol) > 3 {
 			return nil, nil, errors.Wrapf(volumeFormatErr, vol)
@@ -678,6 +680,7 @@ func (config *CreateConfig) getVolumeMounts() (map[string]spec.Mount, map[string
 		} else if len(splitVol) > 1 {
 			dest = splitVol[1]
 		}
+		fmt.Println("--------hehererer", splitVol)
 		if len(splitVol) > 2 {
 			if options, err = parse.ValidateVolumeOpts(strings.Split(splitVol[2], ",")); err != nil {
 				return nil, nil, err

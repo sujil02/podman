@@ -384,6 +384,7 @@ func GetKeepIDMapping() (*storage.IDMappingOptions, int, int, error) {
 
 // ParseIDMapping takes idmappings and subuid and subgid maps and returns a storage mapping
 func ParseIDMapping(mode namespaces.UsernsMode, uidMapSlice, gidMapSlice []string, subUIDMap, subGIDMap string) (*storage.IDMappingOptions, error) {
+	fmt.Println("-------here is the beast", mode.IsKeepID())
 	options := storage.IDMappingOptions{
 		HostUIDMapping: true,
 		HostGIDMapping: true,
