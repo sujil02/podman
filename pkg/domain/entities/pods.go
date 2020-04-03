@@ -144,6 +144,15 @@ func (p PodCreateOptions) ToPodSpecGen(s *specgen.PodSpecGenerator) {
 	s.CgroupParent = p.CGroupParent
 }
 
+type PodPruneOptions struct {
+	Force bool `json:"force" schema:"force"`
+}
+
+type PodPruneReport struct {
+	Err error
+	Id  string
+}
+
 type PodTopOptions struct {
 	// CLI flags.
 	ListDescriptors bool

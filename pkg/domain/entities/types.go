@@ -21,9 +21,7 @@ type Report struct {
 }
 
 type PodDeleteReport struct{ Report }
-type PodPruneOptions struct{}
 
-type PodPruneReport struct{ Report }
 type VolumeDeleteOptions struct{}
 type VolumeDeleteReport struct{ Report }
 

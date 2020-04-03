@@ -177,9 +177,12 @@ func (r *Runtime) GetRunningPods() ([]*Pod, error) {
 
 // PrunePods removes unused pods and their containers from local storage.
 // If force is given, then running pods are also included in the pruning.
-func (r *Runtime) PrunePods() (map[string]error, error) {
+func (r *Runtime) PrunePods(ctx context.Context, force bool) (map[string]error, error) {
 	response := make(map[string]error)
 	states := []string{define.PodStateStopped, define.PodStateExited}
+	if force {
+		states = append(states, define.PodStateRunning)
+	}
 	filterFunc := func(p *Pod) bool {
 		state, _ := p.GetPodStatus()
 		for _, status := range states {

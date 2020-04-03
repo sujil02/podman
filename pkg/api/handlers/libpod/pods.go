@@ -230,13 +230,31 @@ func PodRestart(w http.ResponseWriter, r *http.Request) {
 func PodPrune(w http.ResponseWriter, r *http.Request) {
 	var (
 		runtime = r.Context().Value("runtime").(*libpod.Runtime)
+		decoder = r.Context().Value("decoder").(*schema.Decoder)
+		reports []*entities.PodPruneReport
 	)
-	pruned, err := runtime.PrunePods()
+	query := struct {
+		Force bool `schema:"force"`
+	}{
+		// override any golang type defaults
+	}
+	if err := decoder.Decode(&query, r.URL.Query()); err != nil {
+		utils.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest,
+			errors.Wrapf(err, "Failed to parse parameters for %s", r.URL.String()))
+		return
+	}
+	responses, err := runtime.PrunePods(r.Context(), query.Force)
 	if err != nil {
 		utils.InternalServerError(w, err)
 		return
 	}
-	utils.WriteResponse(w, http.StatusOK, pruned)
+	for k, v := range responses {
+		reports = append(reports, &entities.PodPruneReport{
+			Err: v,
+			Id:  k,
+		})
+	}
+	utils.WriteResponse(w, http.StatusOK, reports)
 }
 
 func PodPause(w http.ResponseWriter, r *http.Request) {

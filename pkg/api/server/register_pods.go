@@ -51,13 +51,13 @@ func (s *APIServer) registerPodsHandlers(r *mux.Router) error {
 	// summary: Prune unused pods
 	// produces:
 	// - application/json
+	//  - in: query
+	//    name: force
+	//    type: boolean
+	//    description : force removal of one or more running pods
 	// responses:
 	//   200:
-	//     description: tbd
-	//     schema:
-	//       type: object
-	//       additionalProperties:
-	//         type: string
+	//     $ref: '#/responses/PodPruneReport'
 	//   400:
 	//     $ref: "#/responses/BadParamError"
 	//   409:

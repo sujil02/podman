@@ -257,7 +257,7 @@ var _ = Describe("Podman pods", func() {
 		var newpod2 string = "newpod2"
 		bt.Podcreate(&newpod2)
 		// No pods pruned since no pod in exited state
-		err = pods.Prune(bt.conn)
+		pruneResponse, err := pods.Prune(bt.conn, &bindings.PFalse)
 		Expect(err).To(BeNil())
 		podSummary, err := pods.List(bt.conn, nil)
 		Expect(err).To(BeNil())
@@ -272,14 +272,20 @@ var _ = Describe("Podman pods", func() {
 		Expect(err).To(BeNil())
 		response, err := pods.Inspect(bt.conn, newpod)
 		Expect(err).To(BeNil())
+		// Validate status and record pod id of pod to be pruned
 		Expect(response.State.Status).To(Equal(define.PodStateExited))
-		err = pods.Prune(bt.conn)
+		podID := response.Config.ID
+		pruneResponse, err = pods.Prune(bt.conn, &bindings.PFalse)
 		Expect(err).To(BeNil())
+		// Check if right pod was pruned
+		Expect(len(pruneResponse)).To(Equal(1))
+		Expect(pruneResponse[0].Id).To(Equal(podID))
+		// One pod is pruned hence only one pod should be active.
 		podSummary, err = pods.List(bt.conn, nil)
 		Expect(err).To(BeNil())
 		Expect(len(podSummary)).To(Equal(1))
 
-		// Test prune all pods in exited state.
+		// Test prune multiple pods.
 		bt.Podcreate(&newpod)
 		_, err = pods.Start(bt.conn, newpod)
 		Expect(err).To(BeNil())
@@ -303,8 +309,41 @@ var _ = Describe("Podman pods", func() {
 			Expect(define.StringToContainerStatus(i.State)).
 				To(Equal(define.ContainerStateStopped))
 		}
-		err = pods.Prune(bt.conn)
+		_, err = pods.Prune(bt.conn, &bindings.PFalse)
 		Expect(err).To(BeNil())
+		podSummary, err = pods.List(bt.conn, nil)
+		Expect(err).To(BeNil())
+		Expect(len(podSummary)).To(Equal(0))
+	})
+
+	// Test to validate prune pods with force.
+	It("prune pod with force flag", func() {
+
+		var newpod2 string = "newpod2"
+		bt.Podcreate(&newpod2)
+		_, err = pods.Start(bt.conn, newpod)
+		Expect(err).To(BeNil())
+		_, err = pods.Start(bt.conn, newpod2)
+
+		// Validate the pods are in running state
+		podSummary, err := pods.List(bt.conn, nil)
+		Expect(len(podSummary)).To(Equal(2))
+		Expect(err).To(BeNil())
+		for _, i := range podSummary {
+			Expect(i.Status).To(Equal(define.PodStateRunning))
+		}
+		// No pods pruned since force is false
+		pruneResponse, err := pods.Prune(bt.conn, &bindings.PFalse)
+		Expect(err).To(BeNil())
+		Expect(len(pruneResponse)).To(Equal(0))
+		podSummary, err = pods.List(bt.conn, nil)
+		Expect(err).To(BeNil())
+		Expect(len(podSummary)).To(Equal(2))
+
+		// Prune pods in runing state with force flag true
+		pruneResponse, err = pods.Prune(bt.conn, &bindings.PTrue)
+		Expect(err).To(BeNil())
+		Expect(len(pruneResponse)).To(Equal(2))
 		podSummary, err = pods.List(bt.conn, nil)
 		Expect(err).To(BeNil())
 		Expect(len(podSummary)).To(Equal(0))
