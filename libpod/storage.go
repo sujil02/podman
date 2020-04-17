@@ -127,7 +127,7 @@ func (r *storageService) CreateContainerStorage(ctx context.Context, systemConte
 
 		return ContainerInfo{}, err
 	}
-	logrus.Debugf("created container %q", container.ID)
+	logrus.Info("Created container %q", container.ID)
 
 	// If anything fails after this point, we need to delete the incomplete
 	// container before returning.

@@ -1226,7 +1226,7 @@ func (c *copier) copyBlobFromStream(ctx context.Context, srcStream io.Reader, sr
 	var compressionOperation types.LayerCompression
 	if canModifyBlob && isOciEncrypted(srcInfo.MediaType) {
 		// PreserveOriginal due to any compression not being able to be done on an encrypted blob unless decrypted
-		logrus.Debugf("Using original blob without modification for encrypted blob")
+		logrus.Info("Using original blob without modification for encrypted blob")
 		compressionOperation = types.PreserveOriginal
 		inputInfo = srcInfo
 	} else if canModifyBlob && c.dest.DesiredLayerCompression() == types.Compress && !isCompressed {
@@ -1275,7 +1275,7 @@ func (c *copier) copyBlobFromStream(ctx context.Context, srcStream io.Reader, sr
 		inputInfo.Size = -1
 	} else {
 		// PreserveOriginal might also need to recompress the original blob if the desired compression format is different.
-		logrus.Debugf("Using original blob without modification")
+		logrus.Info("Using original blob without modification")
 		compressionOperation = types.PreserveOriginal
 		inputInfo = srcInfo
 	}

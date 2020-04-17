@@ -290,12 +290,12 @@ func makeRuntime(ctx context.Context, runtime *Runtime) (err error) {
 		return errors.Wrapf(err, "error merging database config into runtime config")
 	}
 
-	logrus.Debugf("Using graph driver %s", runtime.storageConfig.GraphDriverName)
-	logrus.Debugf("Using graph root %s", runtime.storageConfig.GraphRoot)
-	logrus.Debugf("Using run root %s", runtime.storageConfig.RunRoot)
-	logrus.Debugf("Using static dir %s", runtime.config.Engine.StaticDir)
-	logrus.Debugf("Using tmp dir %s", runtime.config.Engine.TmpDir)
-	logrus.Debugf("Using volume path %s", runtime.config.Engine.VolumePath)
+	logrus.Info("Using graph driver %s", runtime.storageConfig.GraphDriverName)
+	logrus.Info("Using graph root %s", runtime.storageConfig.GraphRoot)
+	logrus.Info("Using run root %s", runtime.storageConfig.RunRoot)
+	logrus.Info("Using static dir %s", runtime.config.Engine.StaticDir)
+	logrus.Info("Using tmp dir %s", runtime.config.Engine.TmpDir)
+	logrus.Info("Using volume path %s", runtime.config.Engine.VolumePath)
 
 	// Validate our config against the database, now that we've set our
 	// final storage configuration

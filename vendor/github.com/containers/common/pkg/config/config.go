@@ -663,7 +663,7 @@ func (c *Config) FindConmon() (string, error) {
 			foundOutdatedConmon = true
 			continue
 		}
-		logrus.Debugf("Using conmon: %q", path)
+		logrus.Info("Using conmon: %q", path)
 		return path, nil
 	}
 
@@ -673,7 +673,7 @@ func (c *Config) FindConmon() (string, error) {
 			logrus.Warnf("Conmon at %s is invalid: %v", path, err)
 			foundOutdatedConmon = true
 		} else {
-			logrus.Debugf("Using conmon from $PATH: %q", path)
+			logrus.Info("Using conmon from $PATH: %q", path)
 			return path, nil
 		}
 	}

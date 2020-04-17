@@ -115,7 +115,7 @@ func (c *NetworkConfig) ConfigureGenerator(g *generate.Generator) error {
 	case netMode.IsBridge():
 		logrus.Debug("Using bridge netmode")
 	case netCtr != "":
-		logrus.Debugf("using container %s netmode", netCtr)
+		logrus.Info("Using container %s netmode", netCtr)
 	case IsNS(string(netMode)):
 		logrus.Debug("Using ns netmode")
 		if err := g.AddOrReplaceLinuxNamespace(string(spec.NetworkNamespace), NS(string(netMode))); err != nil {
@@ -318,7 +318,7 @@ func (c *IpcConfig) ConfigureGenerator(g *generate.Generator) error {
 		return g.RemoveLinuxNamespace(string(spec.IPCNamespace))
 	}
 	if ipcCtr := ipcMode.Container(); ipcCtr != "" {
-		logrus.Debugf("Using container %s ipcmode", ipcCtr)
+		logrus.Info("Using container %s ipcmode", ipcCtr)
 	}
 
 	return nil
@@ -350,7 +350,7 @@ func (c *CgroupConfig) ConfigureGenerator(g *generate.Generator) error {
 		return g.AddOrReplaceLinuxNamespace(string(spec.CgroupNamespace), "")
 	}
 	if cgCtr := cgroupMode.Container(); cgCtr != "" {
-		logrus.Debugf("Using container %s cgroup mode", cgCtr)
+		logrus.Info("Using container %s cgroup mode", cgCtr)
 	}
 	return nil
 }
@@ -381,7 +381,7 @@ func (c *PidConfig) ConfigureGenerator(g *generate.Generator) error {
 		return g.RemoveLinuxNamespace(string(spec.PIDNamespace))
 	}
 	if pidCtr := pidMode.Container(); pidCtr != "" {
-		logrus.Debugf("using container %s pidmode", pidCtr)
+		logrus.Info("Using container %s pidmode", pidCtr)
 	}
 	if IsPod(string(pidMode)) {
 		logrus.Debug("using pod pidmode")
@@ -453,7 +453,7 @@ func (c *UtsConfig) ConfigureGenerator(g *generate.Generator, net *NetworkConfig
 		return g.RemoveLinuxNamespace(string(spec.UTSNamespace))
 	}
 	if utsCtr := utsMode.Container(); utsCtr != "" {
-		logrus.Debugf("using container %s utsmode", utsCtr)
+		logrus.Info("Using container %s utsmode", utsCtr)
 	}
 	return nil
 }

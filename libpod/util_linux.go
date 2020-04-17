@@ -25,13 +25,13 @@ func systemdSliceFromPath(parent, name string) (string, error) {
 		return "", err
 	}
 
-	logrus.Debugf("Created cgroup path %s for parent %s and name %s", cgroupPath, parent, name)
+	logrus.Info("Created cgroup path %s for parent %s and name %s", cgroupPath, parent, name)
 
 	if err := makeSystemdCgroup(cgroupPath); err != nil {
 		return "", errors.Wrapf(err, "error creating cgroup %s", cgroupPath)
 	}
 
-	logrus.Debugf("Created cgroup %s", cgroupPath)
+	logrus.Info("Created cgroup %s", cgroupPath)
 
 	return cgroupPath, nil
 }

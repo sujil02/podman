@@ -268,7 +268,7 @@ func (i *containerImageRef) NewImageSource(ctx context.Context, sc *types.System
 	if err != nil {
 		return nil, errors.Wrapf(err, "error creating temporary directory to hold layer blobs")
 	}
-	logrus.Debugf("using %q to hold temporary data", path)
+	logrus.Info("Using %q to hold temporary data", path)
 	defer func() {
 		if src == nil {
 			err2 := os.RemoveAll(path)

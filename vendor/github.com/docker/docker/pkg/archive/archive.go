@@ -33,7 +33,7 @@ func init() {
 	if path, err := exec.LookPath("unpigz"); err != nil {
 		logrus.Debug("unpigz binary not found in PATH, falling back to go gzip library")
 	} else {
-		logrus.Debugf("Using unpigz binary found at path %s", path)
+		logrus.Info("Using unpigz binary found at path %s", path)
 		unpigzPath = path
 	}
 }
@@ -1106,7 +1106,7 @@ func (archiver *Archiver) CopyWithTar(src, dst string) error {
 	// as owner
 	rootIDs := archiver.IDMapping.RootPair()
 	// Create dst, copy src's content into it
-	logrus.Debugf("Creating dest directory: %s", dst)
+	logrus.Info("Creating dest directory: %s", dst)
 	if err := idtools.MkdirAllAndChownNew(dst, 0755, rootIDs); err != nil {
 		return err
 	}

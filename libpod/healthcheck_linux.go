@@ -33,7 +33,7 @@ func (c *Container) createTimer() error {
 		return errors.Wrapf(err, "unable to get systemd connection to add healthchecks")
 	}
 	conn.Close()
-	logrus.Debugf("creating systemd-transient files: %s %s", "systemd-run", cmd)
+	logrus.Info("Creating systemd-transient files: %s %s", "systemd-run", cmd)
 	systemdRun := exec.Command("systemd-run", cmd...)
 	_, err = systemdRun.CombinedOutput()
 	if err != nil {

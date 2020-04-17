@@ -122,7 +122,7 @@ func newConmonOCIRuntime(name string, paths []string, conmonPath string, runtime
 		}
 		foundPath = true
 		runtime.path = path
-		logrus.Debugf("using runtime %q", path)
+		logrus.Info("Using runtime %q", path)
 		break
 	}
 
@@ -131,7 +131,7 @@ func newConmonOCIRuntime(name string, paths []string, conmonPath string, runtime
 		if foundRuntime, err := exec.LookPath(name); err == nil {
 			foundPath = true
 			runtime.path = foundRuntime
-			logrus.Debugf("using runtime %q from $PATH: %q", name, foundRuntime)
+			logrus.Info("Using runtime %q from $PATH: %q", name, foundRuntime)
 		}
 	}
 

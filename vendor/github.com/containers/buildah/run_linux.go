@@ -67,7 +67,7 @@ func (b *Builder) Run(command []string, options RunOptions) error {
 	if err != nil {
 		return errors.Wrapf(err, "run: error evaluating %q for symbolic links", p)
 	}
-	logrus.Debugf("using %q to hold bundle data", path)
+	logrus.Info("Using %q to hold bundle data", path)
 	defer func() {
 		if err2 := os.RemoveAll(path); err2 != nil {
 			logrus.Errorf("error removing %q: %v", path, err2)
@@ -1053,7 +1053,7 @@ func runConfigureNetwork(isolation Isolation, options RunOptions, configureNetwo
 		if err != nil {
 			return nil, errors.Wrapf(err, "error converting networking configuration from file %q for %v", file, command)
 		}
-		logrus.Debugf("using network configuration from %q", file)
+		logrus.Info("Using network configuration from %q", file)
 		netconf = append(netconf, cl)
 	}
 	for _, list := range lists {
@@ -1069,7 +1069,7 @@ func runConfigureNetwork(isolation Isolation, options RunOptions, configureNetwo
 			}
 			continue
 		}
-		logrus.Debugf("using network configuration list from %q", list)
+		logrus.Info("Using network configuration list from %q", list)
 		netconf = append(netconf, cl)
 	}
 	// Make sure we can access the container's network namespace,

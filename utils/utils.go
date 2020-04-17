@@ -122,6 +122,6 @@ func TarToFilesystem(source string, tarball *os.File) error {
 
 // Tar creates a tarball from source and returns a readcloser of it
 func Tar(source string) (io.ReadCloser, error) {
-	logrus.Debugf("creating tarball of %s", source)
+	logrus.Info("Creating tarball of %s", source)
 	return archive.Tar(source, archive.Uncompressed)
 }

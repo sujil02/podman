@@ -306,7 +306,7 @@ func (r *Runtime) setupContainer(ctx context.Context, ctr *Container) (_ *Contai
 			}
 		}
 
-		logrus.Debugf("Creating new volume %s for container", vol.Name)
+		logrus.Info("Creating new volume %s for container", vol.Name)
 
 		// The volume does not exist, so we need to create it.
 		volOptions := []VolumeCreateOption{WithVolumeName(vol.Name), WithVolumeUID(ctr.RootUID()), WithVolumeGID(ctr.RootGID())}

@@ -177,7 +177,9 @@ func loggingHook() {
 		os.Exit(1)
 	}
 	logrus.SetLevel(level)
-
+	// if logrus.IsLevelEnabled(logrus.DebugLevel) {
+	// 	logrus.SetReportCaller(true)
+	// }
 	if logrus.IsLevelEnabled(logrus.InfoLevel) {
 		logrus.Infof("%s filtering at log level %s", os.Args[0], logrus.GetLevel())
 	}

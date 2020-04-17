@@ -70,6 +70,6 @@ func DefaultCache(sys *types.SystemContext) types.BlobInfoCache {
 		return memory.New()
 	}
 
-	logrus.Debugf("Using blob info cache at %s", path)
+	logrus.Info("Using blob info cache at %s", path)
 	return boltdb.New(path)
 }

@@ -777,7 +777,7 @@ func (s *storageImageDestination) Commit(ctx context.Context, unparsedToplevel t
 		logrus.Debugf("reusing image ID %q", img.ID)
 		oldNames = append(oldNames, img.Names...)
 	} else {
-		logrus.Debugf("created new image ID %q", img.ID)
+		logrus.Info("Created new image ID %q", img.ID)
 	}
 	// Add the non-layer blobs as data items.  Since we only share layers, they should all be in files, so
 	// we just need to screen out the ones that are actually layers to get the list of non-layers.

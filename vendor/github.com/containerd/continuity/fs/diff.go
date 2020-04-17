@@ -100,14 +100,14 @@ type ChangeFunc func(ChangeKind, string, os.FileInfo, error) error
 // is to account for timestamp truncation during archiving.
 func Changes(ctx context.Context, a, b string, changeFn ChangeFunc) error {
 	if a == "" {
-		logrus.Debugf("Using single walk diff for %s", b)
+		logrus.Info("Using single walk diff for %s", b)
 		return addDirChanges(ctx, changeFn, b)
 	} else if diffOptions := detectDirDiff(b, a); diffOptions != nil {
-		logrus.Debugf("Using single walk diff for %s from %s", diffOptions.diffDir, a)
+		logrus.Info("Using single walk diff for %s from %s", diffOptions.diffDir, a)
 		return diffDirChanges(ctx, changeFn, a, diffOptions)
 	}
 
-	logrus.Debugf("Using double walk diff for %s from %s", b, a)
+	logrus.Info("Using double walk diff for %s from %s", b, a)
 	return doubleWalkDiff(ctx, changeFn, a, b)
 }
 

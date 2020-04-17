@@ -1009,7 +1009,7 @@ func (c *Container) init(ctx context.Context, retainRetries bool) error {
 		return err
 	}
 
-	logrus.Debugf("Created container %s in OCI runtime", c.ID())
+	logrus.Info("Created container %s in OCI runtime", c.ID())
 
 	c.state.ExitCode = 0
 	c.state.Exited = false
@@ -1719,7 +1719,7 @@ func (c *Container) saveSpec(spec *spec.Spec) error {
 		return errors.Wrapf(err, "error writing runtime spec JSON for container %s to disk", c.ID())
 	}
 
-	logrus.Debugf("Created OCI spec for container %s at %s", c.ID(), jsonPath)
+	logrus.Info("Created OCI spec for container %s at %s", c.ID(), jsonPath)
 
 	c.state.ConfigPath = jsonPath
 

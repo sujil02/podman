@@ -151,7 +151,7 @@ func (i *VarlinkAPI) BuildImage(call iopodman.VarlinkCall, config iopodman.Build
 	if err != nil {
 		call.ReplyErrorOccurred("unable to create tempdir")
 	}
-	logrus.Debugf("created new context dir at %s", newContextDir)
+	logrus.Info("Created new context dir at %s", newContextDir)
 
 	reader, err := os.Open(contextDir)
 	if err != nil {

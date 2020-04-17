@@ -114,7 +114,7 @@ func (c *Container) prepare() error {
 		c.state.Mounted = true
 		c.state.Mountpoint = mountPoint
 
-		logrus.Debugf("Created root filesystem for container %s at %s", c.ID(), c.state.Mountpoint)
+		logrus.Info("Created root filesystem for container %s at %s", c.ID(), c.state.Mountpoint)
 	}()
 
 	wg.Wait()

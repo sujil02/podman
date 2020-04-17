@@ -1171,7 +1171,7 @@ func (archiver *Archiver) CopyWithTar(src, dst string) error {
 		rootIDs = *archiver.ChownOpts
 	}
 	// Create dst, copy src's content into it
-	logrus.Debugf("Creating dest directory: %s", dst)
+	logrus.Info("Creating dest directory: %s", dst)
 	if err := idtools.MkdirAllAndChownNew(dst, 0755, rootIDs); err != nil {
 		return err
 	}

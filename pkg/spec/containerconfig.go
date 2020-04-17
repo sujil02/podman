@@ -35,7 +35,7 @@ func (config *CreateConfig) MakeContainerConfig(runtime *libpod.Runtime, pod *li
 		return nil, nil, err
 	}
 
-	logrus.Debugf("created OCI spec and options for new container")
+	logrus.Info("Created OCI spec and options for new container")
 
 	return runtimeSpec, options, nil
 }
