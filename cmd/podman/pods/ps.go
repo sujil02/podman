@@ -8,10 +8,10 @@ import (
 	"sort"
 	"strings"
 	"text/tabwriter"
-	"text/template"
 	"time"
 
 	"github.com/containers/libpod/cmd/podman/registry"
+	"github.com/containers/libpod/cmd/podman/utils"
 	"github.com/containers/libpod/cmd/podman/validate"
 	"github.com/containers/libpod/pkg/domain/entities"
 	"github.com/docker/go-units"
@@ -119,18 +119,16 @@ func pods(cmd *cobra.Command, args []string) error {
 	if !psInput.Quiet && !cmd.Flag("format").Changed {
 		format = headers + format
 	}
-	tmpl, err := template.New("listPods").Parse(format)
+	tmpl, err := utils.GenerateTemplate("listPods", format)
 	if err != nil {
 		return err
 	}
 	if !psInput.Quiet {
 		w = tabwriter.NewWriter(os.Stdout, 8, 2, 2, ' ', 0)
 	}
-	if err := tmpl.Execute(w, lpr); err != nil {
+	err = utils.ExecuteTemplateAndFlush(tmpl, lpr, w)
+	if err != nil {
 		return err
-	}
-	if flusher, ok := w.(interface{ Flush() error }); ok {
-		return flusher.Flush()
 	}
 	return nil
 }

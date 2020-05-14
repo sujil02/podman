@@ -138,4 +138,26 @@ var _ = Describe("Podman events", func() {
 		Expect(exist).To(BeTrue())
 		Expect(test.ExitCode()).To(BeZero())
 	})
+
+	It("podman events format json go template", func() {
+		info := GetHostDistributionInfo()
+		if info.Distribution != "fedora" {
+			Skip("need to verify images have correct packages for journald")
+		}
+		_, ec, _ := podmanTest.RunLsContainer("")
+		Expect(ec).To(Equal(0))
+		test := podmanTest.Podman([]string{"events", "--stream=false", "--format", "{{json .}}"})
+		test.WaitWithDefaultTimeout()
+		fmt.Println(test.OutputToStringArray())
+		jsonArr := test.OutputToStringArray()
+		Expect(len(jsonArr)).To(Not(BeZero()))
+		eventsMap := make(map[string]string)
+		err := json.Unmarshal([]byte(jsonArr[0]), &eventsMap)
+		if err != nil {
+			os.Exit(1)
+		}
+		_, exist := eventsMap["Status"]
+		Expect(exist).To(BeTrue())
+		Expect(test.ExitCode()).To(BeZero())
+	})
 })

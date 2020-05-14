@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
 	"text/tabwriter"
 	"time"
 
 	"github.com/containers/libpod/cmd/podman/registry"
+	"github.com/containers/libpod/cmd/podman/utils"
 	"github.com/containers/libpod/cmd/podman/validate"
 	"github.com/containers/libpod/libpod/define"
 	"github.com/containers/libpod/pkg/domain/entities"
@@ -39,9 +39,8 @@ func version(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-
 	switch {
-	case versionFormat == "json", versionFormat == "{{ json .}}":
+	case versionFormat == "json":
 		s, err := json.MarshalToString(versions)
 		if err != nil {
 			return err
@@ -49,26 +48,32 @@ func version(cmd *cobra.Command, args []string) error {
 		_, err = io.WriteString(os.Stdout, s)
 		return err
 	case cmd.Flag("format").Changed:
-		if !strings.HasSuffix(versionFormat, "\n") {
-			versionFormat += "\n"
+		var w io.Writer = os.Stdout
+		tmpl, err := utils.GenerateTemplate("version", versionFormat)
+		if err != nil {
+			return err
+		}
+		err = utils.ExecuteTemplateAndFlush(tmpl, versions, w)
+		if err != nil {
+			return err
+		}
+	default:
+		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		defer w.Flush()
+		if versions.Server != nil {
+			if _, err := fmt.Fprintf(w, "Client:\n"); err != nil {
+				return err
+			}
+			formatVersion(w, versions.Client)
+			if _, err := fmt.Fprintf(w, "\nServer:\n"); err != nil {
+				return err
+			}
+			formatVersion(w, versions.Server)
+		} else {
+			formatVersion(w, versions.Client)
 		}
 	}
 
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	defer w.Flush()
-
-	if versions.Server != nil {
-		if _, err := fmt.Fprintf(w, "Client:\n"); err != nil {
-			return err
-		}
-		formatVersion(w, versions.Client)
-		if _, err := fmt.Fprintf(w, "\nServer:\n"); err != nil {
-			return err
-		}
-		formatVersion(w, versions.Server)
-	} else {
-		formatVersion(w, versions.Client)
-	}
 	return nil
 }
 

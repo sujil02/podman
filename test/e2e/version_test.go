@@ -76,9 +76,12 @@ var _ = Describe("Podman version", func() {
 		session = podmanTest.Podman([]string{"version", "--format", "{{ .Server.Version }}"})
 		session.WaitWithDefaultTimeout()
 		Expect(session).Should(Exit(0))
+	})
 
-		session = podmanTest.Podman([]string{"version", "--format", "{{ .Version }}"})
+	It("podman version --format json", func() {
+		session := podmanTest.Podman([]string{"version", "--format", "{{ json .Client}}"})
 		session.WaitWithDefaultTimeout()
 		Expect(session).Should(Exit(0))
+		Expect(session.IsJSONOutputValid()).To(BeTrue())
 	})
 })
