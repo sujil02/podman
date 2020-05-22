@@ -118,7 +118,6 @@ var _ = Describe("Podman events", func() {
 	})
 
 	It("podman events format", func() {
-		Skip(v2remotefail)
 		info := GetHostDistributionInfo()
 		if info.Distribution != "fedora" {
 			Skip("need to verify images have correct packages for journald")

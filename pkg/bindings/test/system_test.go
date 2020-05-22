@@ -37,7 +37,7 @@ var _ = Describe("Podman system", func() {
 		bt.cleanup()
 	})
 
-	It("podman events", func() {
+	FIt("podman events", func() {
 		eChan := make(chan entities.Event, 1)
 		var messages []entities.Event
 		cancelChan := make(chan bool, 1)
@@ -47,7 +47,7 @@ var _ = Describe("Podman system", func() {
 			}
 		}()
 		go func() {
-			system.Events(bt.conn, eChan, cancelChan, nil, nil, nil)
+			system.Events(bt.conn, eChan, cancelChan, bindings.PFalse, nil, nil, nil)
 		}()
 
 		_, err := bt.RunTopContainer(nil, nil, nil)

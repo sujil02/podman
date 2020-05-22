@@ -5,7 +5,6 @@ import (
 	"context"
 	"html/template"
 	"os"
-	"strings"
 
 	"github.com/containers/buildah/pkg/formats"
 	"github.com/containers/libpod/cmd/podman/registry"
@@ -51,19 +50,8 @@ func init() {
 
 func eventsCmd(cmd *cobra.Command, args []string) error {
 	var (
-		err         error
 		eventsError error
-		tmpl        *template.Template
 	)
-	if strings.Join(strings.Fields(eventFormat), "") == "{{json.}}" {
-		eventFormat = formats.JSONString
-	}
-	if eventFormat != formats.JSONString {
-		tmpl, err = template.New("events").Parse(eventFormat)
-		if err != nil {
-			return err
-		}
-	}
 	if len(eventOptions.Since) > 0 || len(eventOptions.Until) > 0 {
 		eventOptions.FromStart = true
 	}
@@ -80,7 +68,7 @@ func eventsCmd(cmd *cobra.Command, args []string) error {
 	w := bufio.NewWriter(os.Stdout)
 	for event := range eventChannel {
 		switch {
-		case eventFormat == formats.JSONString:
+		case eventFormat == formats.JSONString || eventFormat == "{{json.}}":
 			jsonStr, err := event.ToJSONString()
 			if err != nil {
 				return errors.Wrapf(err, "unable to format json")
@@ -89,6 +77,10 @@ func eventsCmd(cmd *cobra.Command, args []string) error {
 				return err
 			}
 		case len(eventFormat) > 0:
+			tmpl, err := template.New("events").Parse(eventFormat)
+			if err != nil {
+				return err
+			}
 			if err := tmpl.Execute(w, event); err != nil {
 				return err
 			}

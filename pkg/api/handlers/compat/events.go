@@ -25,12 +25,12 @@ func GetEvents(w http.ResponseWriter, r *http.Request) {
 	query := struct {
 		Since   string              `schema:"since"`
 		Until   string              `schema:"until"`
+		Stream  bool                `schema:"stream"`
 		Filters map[string][]string `schema:"filters"`
 	}{}
 	if err := decoder.Decode(&query, r.URL.Query()); err != nil {
 		utils.Error(w, "Failed to parse parameters", http.StatusBadRequest, errors.Wrapf(err, "Failed to parse parameters for %s", r.URL.String()))
 	}
-
 	var libpodFilters = []string{}
 	if _, found := r.URL.Query()["filters"]; found {
 		for k, v := range query.Filters {
@@ -43,7 +43,7 @@ func GetEvents(w http.ResponseWriter, r *http.Request) {
 	}
 	eventChannel := make(chan *events.Event)
 	go func() {
-		readOpts := events.ReadOptions{FromStart: fromStart, Stream: true, Filters: libpodFilters, EventChannel: eventChannel, Since: query.Since, Until: query.Until}
+		readOpts := events.ReadOptions{FromStart: fromStart, Stream: query.Stream, Filters: libpodFilters, EventChannel: eventChannel, Since: query.Since, Until: query.Until}
 		eventsError = runtime.Events(readOpts)
 	}()
 	if eventsError != nil {
