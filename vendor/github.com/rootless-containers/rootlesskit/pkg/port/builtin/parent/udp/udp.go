@@ -1,19 +1,18 @@
 package udp
 
 import (
+	"fmt"
 	"io"
 	"net"
 	"os"
 	"strconv"
-
-	"github.com/pkg/errors"
 
 	"github.com/rootless-containers/rootlesskit/pkg/port"
 	"github.com/rootless-containers/rootlesskit/pkg/port/builtin/msg"
 	"github.com/rootless-containers/rootlesskit/pkg/port/builtin/parent/udp/udpproxy"
 )
 
-func Run(socketPath string, spec port.Spec, stopCh <-chan struct{}, logWriter io.Writer) error {
+func Run(socketPath string, spec port.Spec, stopCh <-chan struct{}, stoppedCh chan error, logWriter io.Writer) error {
 	addr, err := net.ResolveUDPAddr(spec.Proto, net.JoinHostPort(spec.ParentIP, strconv.Itoa(spec.ParentPort)))
 	if err != nil {
 		return err
@@ -39,7 +38,7 @@ func Run(socketPath string, spec port.Spec, stopCh <-chan struct{}, logWriter io
 			}
 			uc, ok := fc.(*net.UDPConn)
 			if !ok {
-				return nil, errors.Errorf("file conn doesn't implement *net.UDPConn: %+v", fc)
+				return nil, fmt.Errorf("file conn doesn't implement *net.UDPConn: %+v", fc)
 			}
 			return uc, nil
 		},
@@ -51,6 +50,8 @@ func Run(socketPath string, spec port.Spec, stopCh <-chan struct{}, logWriter io
 			case <-stopCh:
 				// udpp.Close closes ln as well
 				udpp.Close()
+				stoppedCh <- nil
+				close(stoppedCh)
 				return
 			}
 		}
