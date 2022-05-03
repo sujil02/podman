@@ -3,7 +3,7 @@ module github.com/containers/podman/v4
 go 1.16
 
 require (
-	github.com/BurntSushi/toml v1.0.0
+	github.com/BurntSushi/toml v1.1.0
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/buger/goterm v1.0.4
 	github.com/checkpoint-restore/checkpointctl v0.0.0-20211204171957-54b4ebfdb681
@@ -55,7 +55,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/prometheus/client_golang v1.11.1 // indirect
-	github.com/rootless-containers/rootlesskit v1.0.0
+	github.com/rootless-containers/rootlesskit v1.0.1
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/pflag v1.0.5

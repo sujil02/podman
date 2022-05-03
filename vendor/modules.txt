@@ -1,7 +1,7 @@
 # github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1
 github.com/Azure/go-ansiterm
 github.com/Azure/go-ansiterm/winterm
-# github.com/BurntSushi/toml v1.0.0
+# github.com/BurntSushi/toml v1.1.0
 ## explicit
 github.com/BurntSushi/toml
 github.com/BurntSushi/toml/internal
@@ -479,7 +479,7 @@ github.com/mistifyio/go-zfs
 github.com/mitchellh/mapstructure
 # github.com/moby/sys/mount v0.2.0
 github.com/moby/sys/mount
-# github.com/moby/sys/mountinfo v0.6.0
+# github.com/moby/sys/mountinfo v0.6.1
 github.com/moby/sys/mountinfo
 # github.com/moby/term v0.0.0-20210619224110-3f7ff695adc6
 ## explicit
@@ -614,7 +614,7 @@ github.com/prometheus/procfs/internal/fs
 github.com/prometheus/procfs/internal/util
 # github.com/rivo/uniseg v0.2.0
 github.com/rivo/uniseg
-# github.com/rootless-containers/rootlesskit v1.0.0
+# github.com/rootless-containers/rootlesskit v1.0.1
 ## explicit
 github.com/rootless-containers/rootlesskit/pkg/api
 github.com/rootless-containers/rootlesskit/pkg/msgutil
