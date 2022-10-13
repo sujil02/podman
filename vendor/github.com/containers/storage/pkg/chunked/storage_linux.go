@@ -4,10 +4,10 @@ import (
 	archivetar "archive/tar"
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"hash"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -31,7 +31,6 @@ import (
 	"github.com/klauspost/compress/zstd"
 	"github.com/klauspost/pgzip"
 	digest "github.com/opencontainers/go-digest"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/vbatts/tar-split/archive/tar"
 	"golang.org/x/sys/unix"
@@ -406,7 +405,7 @@ func (o *originFile) OpenFile() (io.ReadCloser, error) {
 // setFileAttrs sets the file attributes for file given metadata
 func setFileAttrs(dirfd int, file *os.File, mode os.FileMode, metadata *internal.FileMetadata, options *archive.TarOptions, usePath bool) error {
 	if file == nil || file.Fd() < 0 {
-		return errors.Errorf("invalid file")
+		return errors.New("invalid file")
 	}
 	fd := int(file.Fd())
 
@@ -547,7 +546,7 @@ func openFileUnderRootFallback(dirfd int, name string, flags uint64, mode os.Fil
 	// Add an additional check to make sure the opened fd is inside the rootfs
 	if !strings.HasPrefix(target, targetRoot) {
 		unix.Close(fd)
-		return -1, fmt.Errorf("error while resolving %q.  It resolves outside the root directory", name)
+		return -1, fmt.Errorf("while resolving %q.  It resolves outside the root directory", name)
 	}
 
 	return fd, err
@@ -657,7 +656,7 @@ func (c *chunkedDiffer) prepareCompressedStreamToFile(partCompression compressed
 		// Only the missing chunk in the requested part refers to a hole.
 		// The received data must be discarded.
 		limitReader := io.LimitReader(from, mf.CompressedSize)
-		_, err := io.CopyBuffer(ioutil.Discard, limitReader, c.copyBuffer)
+		_, err := io.CopyBuffer(io.Discard, limitReader, c.copyBuffer)
 		return fileTypeHole, err
 	case partCompression == fileTypeZstdChunked:
 		c.rawReader = io.LimitReader(from, mf.CompressedSize)
@@ -847,16 +846,16 @@ func (c *chunkedDiffer) storeMissingFiles(streams chan io.ReadCloser, errs chan 
 				return err
 			}
 			if part == nil {
-				return errors.Errorf("invalid stream returned")
+				return errors.New("invalid stream returned")
 			}
 		default:
-			return errors.Errorf("internal error: missing part misses both local and remote data stream")
+			return errors.New("internal error: missing part misses both local and remote data stream")
 		}
 
 		for _, mf := range missingPart.Chunks {
 			if mf.Gap > 0 {
 				limitReader := io.LimitReader(part, mf.Gap)
-				_, err := io.CopyBuffer(ioutil.Discard, limitReader, c.copyBuffer)
+				_, err := io.CopyBuffer(io.Discard, limitReader, c.copyBuffer)
 				if err != nil {
 					Err = err
 					goto exit
@@ -865,7 +864,7 @@ func (c *chunkedDiffer) storeMissingFiles(streams chan io.ReadCloser, errs chan 
 			}
 
 			if mf.File.Name == "" {
-				Err = errors.Errorf("file name empty")
+				Err = errors.New("file name empty")
 				goto exit
 			}
 
@@ -906,7 +905,7 @@ func (c *chunkedDiffer) storeMissingFiles(streams chan io.ReadCloser, errs chan 
 				goto exit
 			}
 			if c.rawReader != nil {
-				if _, err := io.CopyBuffer(ioutil.Discard, c.rawReader, c.copyBuffer); err != nil {
+				if _, err := io.CopyBuffer(io.Discard, c.rawReader, c.copyBuffer); err != nil {
 					Err = err
 					goto exit
 				}
