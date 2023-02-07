@@ -16,12 +16,12 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/blang/semver"
+	"github.com/blang/semver/v4"
 	"github.com/hashicorp/go-multierror"
 	rspec "github.com/opencontainers/runtime-spec/specs-go"
 	osFilepath "github.com/opencontainers/runtime-tools/filepath"
+	capsCheck "github.com/opencontainers/runtime-tools/validate/capabilities"
 	"github.com/sirupsen/logrus"
-	"github.com/syndtr/gocapability/capability"
 
 	"github.com/opencontainers/runtime-tools/specerror"
 	"github.com/xeipuuv/gojsonschema"
@@ -170,8 +170,8 @@ func (v *Validator) CheckJSONSchema() (errs error) {
 func (v *Validator) CheckRoot() (errs error) {
 	logrus.Debugf("check root")
 
-	if v.platform == "windows" && v.spec.Windows != nil {
-		if v.spec.Windows.HyperV != nil {
+	if v.platform == "windows" {
+		if v.spec.Windows != nil && v.spec.Windows.HyperV != nil {
 			if v.spec.Root != nil {
 				errs = multierror.Append(errs,
 					specerror.NewError(specerror.RootOnHyperVNotSet, fmt.Errorf("for Hyper-V containers, Root must not be set"), rspec.Version))
@@ -179,12 +179,12 @@ func (v *Validator) CheckRoot() (errs error) {
 			return
 		} else if v.spec.Root == nil {
 			errs = multierror.Append(errs,
-				specerror.NewError(specerror.RootOnWindowsRequired, fmt.Errorf("on Windows, for Windows Server Containers, this field is REQUIRED"), rspec.Version))
+				specerror.NewError(specerror.RootOnWindowsRequired, fmt.Errorf("on Windows, for Windows Server Containers, Root is REQUIRED"), rspec.Version))
 			return
 		}
-	} else if v.platform != "windows" && v.spec.Root == nil {
+	} else if v.spec.Root == nil {
 		errs = multierror.Append(errs,
-			specerror.NewError(specerror.RootOnNonWindowsRequired, fmt.Errorf("on all other platforms, this field is REQUIRED"), rspec.Version))
+			specerror.NewError(specerror.RootOnNonWindowsRequired, fmt.Errorf("on all other platforms, Root is REQUIRED"), rspec.Version))
 		return
 	}
 
@@ -687,26 +687,10 @@ func (v *Validator) CheckAnnotations() (errs error) {
 }
 
 // CapValid checks whether a capability is valid
+//
+// Deprecated: use github.com/opencontainers/runtime-tools/validate/capabilities.CapValid directly.
 func CapValid(c string, hostSpecific bool) error {
-	isValid := false
-
-	if !strings.HasPrefix(c, "CAP_") {
-		return fmt.Errorf("capability %s must start with CAP_", c)
-	}
-	for _, cap := range capability.List() {
-		if c == fmt.Sprintf("CAP_%s", strings.ToUpper(cap.String())) {
-			if hostSpecific && cap > LastCap() {
-				return fmt.Errorf("%s is not supported on the current host", c)
-			}
-			isValid = true
-			break
-		}
-	}
-
-	if !isValid {
-		return fmt.Errorf("invalid capability: %s", c)
-	}
-	return nil
+	return capsCheck.CapValid(c, hostSpecific)
 }
 
 func envValid(env string) bool {
